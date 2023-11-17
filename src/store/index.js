@@ -16,8 +16,25 @@ Vue.use(Vuex)
 
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
-    modules: {
-      // example
+    state: {
+      count: 3,
+      open: false,
+    },
+    mutations: {
+      increment (state) {
+        state.count++
+      },
+      toggle (state) {
+        state.open = !state.open
+      }
+    },
+    actions: {
+      increment (context) {
+        context.commit('increment')
+      },
+      toggle (context) {
+        context.commit('toggle')
+      }
     },
 
     // enable strict mode (adds overhead!)
