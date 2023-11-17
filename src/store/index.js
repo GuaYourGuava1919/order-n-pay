@@ -26,6 +26,9 @@ export default function (/* { ssrContext } */) {
       },
       toggleOpen (state) {
         state.open = !state.open
+      },
+      setOpen(state, payload) {
+        state.open = payload
       }
     },
     actions: {

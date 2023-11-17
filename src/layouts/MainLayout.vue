@@ -1,53 +1,59 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+    <q-layout view="lHh Lpr lFf">
+      <q-header elevated>
+        <q-toolbar>
+          <q-btn
+            flat
+            dense
+            round
+            icon="menu"
+            aria-label="Menu"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+          />
+  
+          <q-toolbar-title>
+            Order-n-Pay   `{{ open }}`
+          </q-toolbar-title>
+  
+          <q-btn outline rounded label="登入/註冊" @click="toggle"/>
+        </q-toolbar>
+      </q-header>
+  
+      <q-drawer
+        v-model="leftDrawerOpen"
+        show-if-above
+        bordered
+        content-class="bg-grey-1"
+      >
+        <q-list>
+          <q-item-label
+            header
+            class="text-grey-8"
+          >
+            功能列表
+          </q-item-label>
+          <EssentialLink
+            v-for="link in essentialLinks"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
+      </q-drawer>
+  
+      <q-page-container>
+        <router-view />
+      </q-page-container>
 
-        <q-toolbar-title>
-          Order-n-Pay   `{{ open }}`
-        </q-toolbar-title>
-
-        <q-btn outline rounded label="登入/註冊" @click="toggle"/>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          功能列表
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+      <div class="">
+        <SignUp/>
+      </div>
+  
+    </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
+import SignUp from 'src/components/auth/SignUp.vue'
 
 const linksData = [
   {
@@ -85,7 +91,8 @@ const linksData = [
 export default {
   name: 'MainLayout',
   components: {
-    EssentialLink
+    EssentialLink,
+    SignUp
   },
   data () {
     return {
