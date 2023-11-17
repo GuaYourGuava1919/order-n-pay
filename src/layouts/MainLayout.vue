@@ -11,11 +11,8 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn outline rounded label="登入/註冊" /><!--@click="toggle"/>-->
       </q-toolbar>
     </q-header>
 
@@ -30,7 +27,7 @@
           header
           class="text-grey-8"
         >
-          Essential Links
+          功能列表
         </q-item-label>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -51,45 +48,33 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
+    title: '點餐功能',
+    caption: '開單、點餐、常用餐廳資訊',
+    icon: 'local_dining',
     link: 'https://quasar.dev'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
+    title: '收付帳功能',
+    caption: '收錢、還錢、賒帳',
+    icon: 'attach_money',
     link: 'https://github.com/quasarframework'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
+    title: '投票區',
+    caption: '投票、查看投票結果',
+    icon: 'how_to_vote',
     link: 'https://chat.quasar.dev'
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
+    title: '抽籤筒',
+    caption: '抽籤、查看抽籤結果',
+    icon: 'casino',
     link: 'https://forum.quasar.dev'
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
+    title: '個人資料',
+    caption: '個人資料、修改密碼、登出',
+    icon: 'person',
     link: 'https://awesome.quasar.dev'
   }
 ]
