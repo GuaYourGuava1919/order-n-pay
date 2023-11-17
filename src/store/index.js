@@ -24,7 +24,7 @@ export default function (/* { ssrContext } */) {
       increment (state) {
         state.count++
       },
-      toggle (state) {
+      toggleOpen (state) {
         state.open = !state.open
       }
     },

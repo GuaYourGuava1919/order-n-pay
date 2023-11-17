@@ -11,8 +11,11 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
+        <q-toolbar-title>
+          Order-n-Pay   `{{ open }}`
+        </q-toolbar-title>
 
-        <q-btn outline rounded label="登入/註冊" /><!--@click="toggle"/>-->
+        <q-btn outline rounded label="登入/註冊" @click="toggle"/>
       </q-toolbar>
     </q-header>
 
@@ -87,7 +90,17 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      essentialLinks: linksData,
+    }
+  },
+  computed: {
+    open () {
+      return this.$store.state.open
+    }
+  },
+  methods: {
+    toggle () {
+      this.$store.commit('toggleOpen')
     }
   }
 }
