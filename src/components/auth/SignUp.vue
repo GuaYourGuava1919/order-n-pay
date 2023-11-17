@@ -4,23 +4,28 @@
             <q-form
             @submit="onSubmit"
             @reset="onReset"
-            class="q-gutter-md"
             >
-            <q-card-section>
+            <q-card-section class="q-ma-md q-pa-mb flex justify-center items-center" >
+                <q-card-title class="text-h5">註冊</q-card-title>
+            </q-card-section>
+            <q-card-section class="q-ma-md">
             <q-input
+                class="q-mb-md"
                 filled
                 v-model="name"
-                label="請輸入名稱 *"
-                hint="真實姓名或暱稱皆可"
+                label="請輸入名稱"
+                hide-bottom-space
                 lazy-rules
                 :rules="[ val => val && val.length > 0 || '名稱不能為空']"
             />
         
             <q-input
+                class="q-mb-md"
                 filled
                 v-model="email"
                 type="email"
                 label="請輸入電子郵件"
+                hide-bottom-space
                 lazy-rules
                 :rules="[
                 val => !!val || '電子郵件不能為空',
@@ -29,9 +34,11 @@
             />
         
             <q-input
+                class="q-mb-md"
                 filled
                 v-model="password"
                 label="請輸入密碼"
+                hide-bottom-space
                 lazy-rules
                 :rules="[
                 val => !!val || '密碼不能為空',
@@ -40,9 +47,9 @@
                 ]"
             />
             </q-card-section>
-            <q-card-actions align="right" class="text-primary">
-                <q-btn label="Submit" type="submit" color="primary"/>
-                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+            <q-card-actions align="right" class="text-primary q-ma-md">
+                <q-btn label="清空" type="reset" color="primary" flat class="q-ml-sm" />
+                <q-btn label="註冊" type="submit" color="primary" class=""/>
             </q-card-actions>
             </q-form>
         </q-card>

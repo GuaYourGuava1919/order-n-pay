@@ -44,9 +44,7 @@
         <router-view />
       </q-page-container>
 
-      <div class="">
-        <SignUp/>
-      </div>
+      <SignUp/>
   
     </q-layout>
 </template>
