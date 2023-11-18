@@ -19,7 +19,8 @@ export default function (/* { ssrContext } */) {
     state: {
       count: 3,
       openSignUp: false,
-      openSignIn: false
+      openSignIn: false,
+      currentUser: {}
     },
     mutations: {
       increment (state) {
@@ -38,7 +39,13 @@ export default function (/* { ssrContext } */) {
       },
       setOpenSignIn(state, payload) {
         state.openSignIn = payload
-      }
+      },
+      setCurrentUser(state, payload) {
+        state.currentUser = payload
+      },
+      clearCurrentUser(state) {
+        state.currentUser = {}
+      },
     },
     actions: {
       increment (context) {
@@ -49,6 +56,12 @@ export default function (/* { ssrContext } */) {
       },
       toggleOpenSignIn  (context) {
         context.commit('toggleOpenSignIn')
+      },
+      setCurrentUser (context, payload) {
+        context.commit('setCurrentUser', payload)
+      },
+      clearCurrentUser (context) {
+        context.commit('clearCurrentUser')
       }
     },
 

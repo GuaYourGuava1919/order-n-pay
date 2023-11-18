@@ -2,7 +2,7 @@
   "name": "order-n-pay",
   "version": "0.0.1",
   "description": "A Quasar Project",
-  "productName": "Quasar App",
+  "productName": "Order N Pay",
   "author": "Nicole <nicolelin9004@gmail.com>",
   "private": true,
   "scripts": {

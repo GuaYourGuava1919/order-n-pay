@@ -1,5 +1,5 @@
 <template>
-    <q-layout view="lHh Lpr lFf">
+   <q-layout view="lHh Lpr lFf">
       <q-header elevated class="q-py-md">
         <q-toolbar>
           <q-btn
@@ -11,13 +11,13 @@
             @click="leftDrawerOpen = !leftDrawerOpen"
           />
           <q-toolbar-title>
-            Order-n-Pay
+            Order-n-Pay {{ }}
           </q-toolbar-title>
-  
-          <q-btn class="q-mr-md"  outline rounded label="登入/註冊" @click="toggle"/>
+          <q-btn class="q-mr-md"  outline rounded label="登出" @click="toggleSignOut" v-if="currentUser.id != null"/>
+          <q-btn class="q-mr-md"  outline rounded label="登入/註冊" @click="toggle" v-else/>
+
         </q-toolbar>
       </q-header>
-  
       <q-drawer
         v-model="leftDrawerOpen"
         show-if-above
@@ -47,12 +47,16 @@
       <SignIn/>
   
     </q-layout>
+    
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
 import SignUp from 'src/components/auth/SignUp.vue'
 import SignIn from 'src/components/auth/SignIn.vue'
+import {  getAuth,signOut } from 'firebase/auth'
+import app from "../components/setting/FirebaseConfig.vue";
+import { get } from 'http';
 
 const linksData = [
   {
@@ -103,12 +107,26 @@ export default {
   computed: {
     open () {
       return this.$store.state.openSignIn
+    },
+    currentUser(){
+      return this.$store.state.currentUser
     }
   },
   methods: {
     toggle () {
       this.$store.commit('toggleOpenSignIn')
-    }
+    },
+    async toggleSignOut() {
+      try {
+        const auth = getAuth(app)
+        await signOut(auth)
+        localStorage.clear(); // Remove user uid from localStorage
+        this.$store.commit('clearCurrentUser') // Remove user uid from Vuex
+        console.log('登出成功')
+      } catch (error) {
+        console.error('登出失敗', error)
+      }
+    },
   }
 }
 </script>
