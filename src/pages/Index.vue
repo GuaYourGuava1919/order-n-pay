@@ -1,9 +1,9 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex items-end">
     <img
-      alt="Quasar logo"
+      alt="Silence Suzuka"
       src="https://gametora.com/images/umamusume/characters/chara_stand_1002_100201.png"
-      style="width: 200px; height: 200px"
+      class="silence"
     >
   </q-page>
 </template>
@@ -13,3 +13,10 @@ export default {
   name: 'PageIndex'
 }
 </script>
+
+<style>
+.silence {
+  width: 200px; 
+  height: 200px; 
+}
+</style>

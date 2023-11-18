@@ -1,24 +1,14 @@
 <template>
-    <q-dialog v-model="open " persistent>
+    <q-dialog v-model="open" persistent>
         <q-card>
+            <q-icon name="close" class="q-ma-md" size="2em" color="primary" @click="onClose"/>
             <q-form
-            @submit="signUp"
-            @reset="onReset"
+            @submit="signIn"
             >
             <q-card-section class="q-ma-md q-pa-mb flex justify-center items-center text-h6" >
-                註冊
+                登入
             </q-card-section>
             <q-card-section class="q-ma-md">
-            <!-- <q-input
-                class="q-mb-md"
-                filled
-                v-model="account.name"
-                label="請輸入名稱"
-                hide-bottom-space
-                lazy-rules
-                :rules="[ val => val && val.length > 0 || '名稱不能為空']"
-            /> -->
-        
             <q-input
                 class="q-mb-md"
                 filled
@@ -49,8 +39,8 @@
             />
             </q-card-section>
             <q-card-actions align="right" class="text-primary q-ma-md">
-                <q-btn label="取消" type="reset" color="primary" flat class="q-ml-sm" v-close-popup/>
-                <q-btn label="註冊" type="submit" color="primary" class=""/>
+                <q-btn label="註冊" color="primary" flat class="q-ml-sm" @click="toggle"/>
+                <q-btn label="登入" type="submit" color="primary"/>
             </q-card-actions>
             </q-form>
         </q-card>
@@ -58,10 +48,10 @@
 </template>
     
 <script>
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth'
 import app from "../setting/FirebaseConfig.vue";
     export default {
-        name: 'SignUp',
+        name: 'SignIn',
         data () {
             return {
                 account: {
@@ -73,31 +63,33 @@ import app from "../setting/FirebaseConfig.vue";
         computed: {
             open :{
                 get() {
-                    return this.$store.state.openSignUp
+                    return this.$store.state.openSignIn
                 },
                 set(value) {
-                    this.$store.commit('setOpenSignUp', value)
+                    this.$store.commit('setOpenSignIn', value)
                 }
             },
         },
         methods: {
-            onSubmit () {
-                
-            },
-            onReset () {
+            onClose () {
+                this.open = false
                 this.account.email = ''
                 this.account.password = ''
             },
-            async signUp() {
+            async signIn() {
                 const auth = getAuth(app)
-                const res = await createUserWithEmailAndPassword(auth, this.account.email, this.account.password)
+                const res = await signInWithEmailAndPassword(auth, this.account.email, this.account.password)
                 if (res.user) {
                     console.log(res.user)
-                    console.log('註冊成功')
+                    console.log('登入成功')
+                    this.onClose()
                 }
+            },
+            toggle () {
+                this.$store.commit('toggleOpenSignUp')
             }
                
-        }
+        },
     }
 </script>
     

@@ -1,6 +1,6 @@
 <template>
     <q-layout view="lHh Lpr lFf">
-      <q-header elevated>
+      <q-header elevated class="q-py-md">
         <q-toolbar>
           <q-btn
             flat
@@ -10,12 +10,11 @@
             aria-label="Menu"
             @click="leftDrawerOpen = !leftDrawerOpen"
           />
-  
           <q-toolbar-title>
-            Order-n-Pay   `{{ open }}`
+            Order-n-Pay
           </q-toolbar-title>
   
-          <q-btn outline rounded label="登入/註冊" @click="toggle"/>
+          <q-btn class="q-mr-md"  outline rounded label="登入/註冊" @click="toggle"/>
         </q-toolbar>
       </q-header>
   
@@ -45,6 +44,7 @@
       </q-page-container>
 
       <SignUp/>
+      <SignIn/>
   
     </q-layout>
 </template>
@@ -52,6 +52,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
 import SignUp from 'src/components/auth/SignUp.vue'
+import SignIn from 'src/components/auth/SignIn.vue'
 
 const linksData = [
   {
@@ -90,7 +91,8 @@ export default {
   name: 'MainLayout',
   components: {
     EssentialLink,
-    SignUp
+    SignUp,
+    SignIn
   },
   data () {
     return {
@@ -100,12 +102,12 @@ export default {
   },
   computed: {
     open () {
-      return this.$store.state.open
+      return this.$store.state.openSignIn
     }
   },
   methods: {
     toggle () {
-      this.$store.commit('toggleOpen')
+      this.$store.commit('toggleOpenSignIn')
     }
   }
 }

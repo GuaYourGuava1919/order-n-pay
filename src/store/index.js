@@ -18,25 +18,37 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
       count: 3,
-      open: false,
+      openSignUp: false,
+      openSignIn: false
     },
     mutations: {
       increment (state) {
         state.count++
       },
-      toggleOpen (state) {
-        state.open = !state.open
+      //註冊
+      toggleOpenSignUp (state) {
+        state.openSignUp = !state.openSignUp
       },
-      setOpen(state, payload) {
-        state.open = payload
+      setOpenSignUp(state, payload) {
+        state.openSignUp = payload
+      },
+      //登入
+      toggleOpenSignIn (state) {
+        state.openSignIn = !state.openSignIn
+      },
+      setOpenSignIn(state, payload) {
+        state.openSignIn = payload
       }
     },
     actions: {
       increment (context) {
         context.commit('increment')
       },
-      toggle (context) {
-        context.commit('toggle')
+      toggleOpenSignUp  (context) {
+        context.commit('toggleOpenSignUp')
+      },
+      toggleOpenSignIn  (context) {
+        context.commit('toggleOpenSignIn')
       }
     },
 
