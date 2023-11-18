@@ -9,7 +9,7 @@
                 註冊
             </q-card-section>
             <q-card-section class="q-ma-md">
-            <!-- <q-input
+            <q-input
                 class="q-mb-md"
                 filled
                 v-model="account.name"
@@ -17,8 +17,17 @@
                 hide-bottom-space
                 lazy-rules
                 :rules="[ val => val && val.length > 0 || '名稱不能為空']"
-            /> -->
-        
+            />
+            <q-select class="q-mb-md" v-model="account.payment" filled :options="options" label="選擇常用付款方式"  
+                hide-bottom-space
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || '付款方式不能為空']"/>
+            <q-input
+                class="q-mb-md"
+                filled
+                v-model="account.bankAccount"
+                label="請輸入常用銀行帳號"
+            />
             <q-input
                 class="q-mb-md"
                 filled
@@ -32,7 +41,6 @@
                 val => /.+@.+\..+/.test(val) || '請輸入有效的電子郵件地址'
                 ]"
             />
-        
             <q-input
                 class="q-mb-md"
                 filled
@@ -47,6 +55,7 @@
                 // val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/.test(val) || '密碼需要包含至少一個小寫字母、一個大寫字母和一個數字'
                 ]"
             />
+
             </q-card-section>
             <q-card-actions align="right" class="text-primary q-ma-md">
                 <q-btn label="取消" type="reset" color="primary" flat class="q-ml-sm" v-close-popup/>
@@ -60,6 +69,7 @@
 <script>
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import app from "../setting/FirebaseConfig.vue";
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
     export default {
         name: 'SignUp',
         data () {
@@ -67,7 +77,13 @@ import app from "../setting/FirebaseConfig.vue";
                 account: {
                     email: '',
                     password: '',
+                    name: '',
+                    payment: '',
+                    bankAccount: '',
                 },
+                options: [
+                    'Line Pay','現金支付','銀行轉帳'
+                ]
             }
         },
         computed: {
@@ -81,19 +97,29 @@ import app from "../setting/FirebaseConfig.vue";
             },
         },
         methods: {
-            onSubmit () {
-                
-            },
             onReset () {
                 this.account.email = ''
                 this.account.password = ''
+                this.account.name = ''
+                this.account.payment = ''
+                this.account.bankAccount = ''
             },
             async signUp() {
                 const auth = getAuth(app)
+                const db = getFirestore(app);
                 const res = await createUserWithEmailAndPassword(auth, this.account.email, this.account.password)
+                await setDoc(doc(db, "user", res.user.uid), {
+                    name: this.account.name,
+                    email: this.account.email,
+                    auth: "normal",
+                    payment: this.account.payment,
+                    bankAccount: this.account.bankAccount,
+                });
                 if (res.user) {
                     console.log(res.user)
                     console.log('註冊成功')
+                    this.open = false
+                    this.onReset()
                 }
             }
                

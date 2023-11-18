@@ -9,9 +9,18 @@
             icon="menu"
             aria-label="Menu"
             @click="leftDrawerOpen = !leftDrawerOpen"
+            v-if="currentUser.id != null"
+          />
+          <q-btn
+            flat
+            dense
+            round
+            icon="menu"
+            v-else
+            @click="alert=true"
           />
           <q-toolbar-title>
-            Order-n-Pay {{ }}
+            Order-n-Pay 
           </q-toolbar-title>
           <q-btn class="q-mr-md"  outline rounded label="登出" @click="toggleSignOut" v-if="currentUser.id != null"/>
           <q-btn class="q-mr-md"  outline rounded label="登入/註冊" @click="toggle" v-else/>
@@ -45,7 +54,21 @@
 
       <SignUp/>
       <SignIn/>
-  
+
+      <q-dialog v-model="alert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">請先登入</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          大哥，你還沒登入；登入才能用喔！
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="好喔" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     </q-layout>
     
 </template>
@@ -102,6 +125,7 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: linksData,
+      alert:false,
     }
   },
   computed: {

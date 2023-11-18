@@ -20,7 +20,8 @@ export default function (/* { ssrContext } */) {
       count: 3,
       openSignUp: false,
       openSignIn: false,
-      currentUser: {}
+      currentUser: {},
+      currentUserInfo: {}
     },
     mutations: {
       increment (state) {
@@ -46,6 +47,9 @@ export default function (/* { ssrContext } */) {
       clearCurrentUser(state) {
         state.currentUser = {}
       },
+      setCurrentUserInfo(state, payload) {
+        state.currentUserInfo = payload
+      }
     },
     actions: {
       increment (context) {
@@ -62,6 +66,9 @@ export default function (/* { ssrContext } */) {
       },
       clearCurrentUser (context) {
         context.commit('clearCurrentUser')
+      },
+      setCurrentUserInfo (context, payload) {
+        context.commit('setCurrentUserInfo', payload)
       }
     },
 
