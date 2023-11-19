@@ -83,7 +83,7 @@ const linksData = [
     title: "點餐功能",
     caption: "開單、點餐、常用餐廳資訊",
     icon: "local_dining",
-    link: "https://quasar.dev",
+    link: "/order",
   },
   {
     title: "收付帳功能",
@@ -144,6 +144,9 @@ export default {
         localStorage.clear(); // Remove user uid from localStorage
         this.$store.commit("clearCurrentUser"); // Remove user uid from Vuex
         this.login = false;
+        if (this.$route.path !== "/") {
+          this.$router.push("/");
+        }
         console.log("登出成功");
       } catch (error) {
         console.error("登出失敗", error);

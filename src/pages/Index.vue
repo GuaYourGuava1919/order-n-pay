@@ -20,7 +20,7 @@
           <!-- <div>權限：{{ currentUserInfo.auth }}</div> -->
         </q-card-section>
       </q-card>
-      <div v-else>
+      <div v-else-if="!uid">
         <q-carousel
           v-model="slide"
           transition-prev="scale"
