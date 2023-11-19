@@ -9,7 +9,7 @@
             icon="menu"
             aria-label="Menu"
             @click="leftDrawerOpen = !leftDrawerOpen"
-            v-if="currentUser.id != null"
+            v-if="uid"
           />
           <q-btn
             flat
@@ -20,9 +20,9 @@
             @click="alert=true"
           />
           <q-toolbar-title>
-            Order-n-Pay 
+            Order-n-Pay
           </q-toolbar-title>
-          <q-btn class="q-mr-md"  outline rounded label="登出" @click="toggleSignOut" v-if="currentUser.id != null"/>
+          <q-btn class="q-mr-md"  outline rounded label="登出" @click="toggleSignOut" v-if="uid"/>
           <q-btn class="q-mr-md"  outline rounded label="登入/註冊" @click="toggle" v-else/>
 
         </q-toolbar>
@@ -47,7 +47,7 @@
           />
         </q-list>
       </q-drawer>
-  
+      <!-- 這裡是重點 -->
       <q-page-container>
         <router-view />
       </q-page-container>
@@ -79,7 +79,7 @@ import SignUp from 'src/components/auth/SignUp.vue'
 import SignIn from 'src/components/auth/SignIn.vue'
 import {  getAuth,signOut } from 'firebase/auth'
 import app from "../components/setting/FirebaseConfig.vue";
-import { get } from 'http';
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 const linksData = [
   {
@@ -132,9 +132,9 @@ export default {
     open () {
       return this.$store.state.openSignIn
     },
-    currentUser(){
-      return this.$store.state.currentUser
-    }
+    uid () {
+      return this.$store.state.currentUser.id
+    },
   },
   methods: {
     toggle () {
@@ -144,13 +144,38 @@ export default {
       try {
         const auth = getAuth(app)
         await signOut(auth)
-        localStorage.clear(); // Remove user uid from localStorage
+        localStorage.clear() // Remove user uid from localStorage
         this.$store.commit('clearCurrentUser') // Remove user uid from Vuex
+        this.login = false
         console.log('登出成功')
       } catch (error) {
         console.error('登出失敗', error)
       }
     },
-  }
+    async getCurrentUser(v) {
+        const db = getFirestore(app);
+        const userDoc = await getDoc(doc(db, "user", v));
+        this.$store.commit('setCurrentUserInfo', userDoc.data());
+        console.log("讀取成功",userDoc.data());
+    },
+    //更新時檢查是否登入
+    async checkLogin(){
+      this.$q.loading.show()
+      const res = localStorage.getItem('currentUser')
+      if(res){
+        const currentUser = JSON.parse(res);
+        console.log('已登入',currentUser)
+        this.$store.commit('setCurrentUser', currentUser);
+        await this.getCurrentUser(currentUser.uid);
+        console.log('已讀取',this.$store.state.currentUserInfo)
+        this.$q.loading.hide()
+      }else{
+        console.log('尚未登入')
+      }
+    },
+  },
+  mounted () {
+    this.checkLogin()
+  },
 }
 </script>

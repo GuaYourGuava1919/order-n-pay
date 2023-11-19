@@ -20,7 +20,10 @@ export default function (/* { ssrContext } */) {
       count: 3,
       openSignUp: false,
       openSignIn: false,
-      currentUser: {},
+      currentUser: {
+        id: '',
+        email: ''
+      },
       currentUserInfo: {}
     },
     mutations: {
@@ -42,10 +45,13 @@ export default function (/* { ssrContext } */) {
         state.openSignIn = payload
       },
       setCurrentUser(state, payload) {
-        state.currentUser = payload
+        // state.currentUser = payload
+        state.currentUser.id = payload.uid
+        state.currentUser.email = payload.email
       },
       clearCurrentUser(state) {
         state.currentUser = {}
+        state.currentUserInfo = {}
       },
       setCurrentUserInfo(state, payload) {
         state.currentUserInfo = payload

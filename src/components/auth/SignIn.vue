@@ -97,7 +97,7 @@ import app from "../setting/FirebaseConfig.vue";
                     const res = await signInWithEmailAndPassword(auth, this.account.email, this.account.password);
                     if (res.user) {
                         localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
-                        this.$store.commit('setCurrentUser', { id: res.user.uid, email: res.user.email }); // 將使用者uid存入vuex
+                        this.$store.commit('setCurrentUser', res.user); // 將使用者存入vuex
                         console.log(res.user);
                         await this.getCurrentUser(res.user.uid);
                         console.log('登入成功');
