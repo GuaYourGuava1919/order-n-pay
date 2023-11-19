@@ -99,8 +99,7 @@ export default {
   methods: {
     onClose() {
       this.open = false;
-      this.account.email = "";
-      this.account.password = "";
+      this.account={};
     },
     async getCurrentUser(v) {
       const db = getFirestore(app);
@@ -120,17 +119,11 @@ export default {
         if (res.user) {
           localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
           this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
-          console.log(res.user);
-          await this.getCurrentUser(res.user.uid);
-          console.log("登入成功");
-          await this.$q.notify({
-            type: "positive",
-            message: `This is a "positive" type notification.`,
-            timeout: 3000,
-          });
-          this.$router.go();
-          this.onClose();
-          // this.$q.loading.hide();
+          await this.getCurrentUser(res.user.uid);//將使用者資料存入vuex
+          console.log("登入成功",res.user);
+          window.location.reload();//重新整理頁面
+          this.onClose();//關閉登入視窗
+          this.$q.loading.hide();//關閉loading
         }
       } catch (error) {
         console.error("登入失敗", error.code, error.message);
@@ -146,6 +139,7 @@ export default {
     },
     toggle() {
       this.$store.commit("toggleOpenSignUp");
+      this.$store.commit("toggleOpenSignIn");
     },
   },
   mounted() {},

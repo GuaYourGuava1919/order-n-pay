@@ -71,6 +71,7 @@
 </template>
 
 <script>
+
 export default {
   name: "PageIndex",
   data() {
@@ -78,8 +79,21 @@ export default {
       slide: "style",
     };
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    notify() {
+      const status = localStorage.getItem("currentUser");
+      if(status){
+        this.$q.notify({
+        message: '已登入',
+        color: 'positive',
+        icon: 'login'
+      })
+    }
+    },
+  },
+  mounted() {
+    this.notify();
+  },
   computed: {
     currentUserInfo() {
       return this.$store.state.currentUserInfo;

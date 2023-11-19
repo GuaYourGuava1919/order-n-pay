@@ -24,7 +24,12 @@ export default function (/* { ssrContext } */) {
         id: '',
         email: ''
       },
-      currentUserInfo: {}
+      currentUserInfo: {
+        id: '',
+        name: '讀取中...',
+        email: '讀取中...',
+        
+      }
     },
     mutations: {
       increment (state) {

@@ -18,7 +18,7 @@
           outline
           rounded
           label="登出"
-          @click="toggleSignOut"
+          @click="tosignOut"
           v-if="uid"
         />
         <q-btn
@@ -46,7 +46,6 @@
         />
       </q-list>
     </q-drawer>
-    <!-- 這裡是重點 -->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -137,7 +136,7 @@ export default {
     toggle() {
       this.$store.commit("toggleOpenSignIn");
     },
-    async toggleSignOut() {
+    async tosignOut() {
       try {
         const auth = getAuth(app);
         await signOut(auth);
@@ -147,7 +146,12 @@ export default {
         if (this.$route.path !== "/") {
           this.$router.push("/");
         }
-        console.log("登出成功");
+        this.$q.notify({
+        message: '已登出',
+        color: 'positive',
+        icon: 'logout'
+      })
+
       } catch (error) {
         console.error("登出失敗", error);
       }
@@ -160,7 +164,6 @@ export default {
     },
     //更新時檢查是否登入
     async checkLogin() {
-      this.$q.loading.show();
       const res = localStorage.getItem("currentUser");
       if (res) {
         const currentUser = JSON.parse(res);
@@ -168,10 +171,8 @@ export default {
         this.$store.commit("setCurrentUser", currentUser);
         await this.getCurrentUser(currentUser.uid);
         console.log("已讀取", this.$store.state.currentUserInfo);
-        this.$q.loading.hide();
       } else {
         console.log("尚未登入");
-        this.$q.loading.hide();
       }
     },
   },

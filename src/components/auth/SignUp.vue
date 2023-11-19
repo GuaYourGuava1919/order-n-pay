@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="open" persistent>
     <q-card style="width: 90vw">
-      <q-form @submit="signUp" @reset="onReset">
+      <q-form @submit="signUp" @reset="onClose">
         <q-card-section
           class="q-ma-md q-pb-md flex justify-center items-center text-h6"
         >
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword, getAuth } from "firebase/auth";
 import app from "../setting/FirebaseConfig.vue";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 export default {
@@ -106,41 +106,44 @@ export default {
     },
   },
   methods: {
-    onReset() {
-      this.account.email = "";
-      this.account.password = "";
-      this.account.name = "";
-      this.account.payment = "";
-      this.account.bankAccount = "";
+    onClose() {
+      this.account={};
+      this.open = false;
     },
     async signUp() {
-      this.$q.loading.show();
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      const res = await createUserWithEmailAndPassword(
+      try{
+        this.$q.loading.show();//loading
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const toSignUp = await createUserWithEmailAndPassword(
         auth,
         this.account.email,
         this.account.password
-      );
-      await setDoc(doc(db, "user", res.user.uid), {
-        name: this.account.name,
-        email: this.account.email,
-        auth: "normal",
-        payment: this.account.payment,
-        bankAccount: this.account.bankAccount,
-      });
-      if (res.user) {
-        console.log(res.user);
-        console.log("註冊成功");
-        this.open = false;
-        this.onReset();
+        );//註冊
+        console.log("註冊成功", toSignUp.user.uid)
+        const userDoc = await setDoc(doc(db, "user",toSignUp.user.uid), {
+          name: this.account.name,
+          email: this.account.email,
+          auth: "normal",
+          payment: this.account.payment,
+          bankAccount: this.account.bankAccount,
+        });//寫入資料庫
+        console.log("寫入成功");
+        const res = await signInWithEmailAndPassword(
+          auth,
+          this.account.email,
+          this.account.password
+        );//登入
+        localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
+        this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
+        console.log("登入成功",res.user);
+        window.location.reload();//重新整理頁面
+        this.onClose();//關閉登入視窗
+        this.$q.loading.hide();//關閉loading
       }
-      this.$q.loading.hide();
-      this.$q.notify({
-        message: "註冊成功！",
-        position: "top",
-        // timeout: Math.random() * 5000 + 3000,
-      });
+      catch(error){
+        console.log(error);
+      }
     },
   },
 };
