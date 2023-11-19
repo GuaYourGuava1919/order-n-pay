@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="open" persistent>
-    <q-card>
+    <q-card style="width: 90vw">
       <q-icon
         name="close"
         class="q-ma-md"
@@ -10,7 +10,7 @@
       />
       <q-form @submit="signIn">
         <q-card-section
-          class="q-ma-md q-pa-mb flex justify-center items-center text-h6"
+          class="q-mx-md no-padding flex justify-center items-center text-h6"
         >
           登入
         </q-card-section>
@@ -122,10 +122,15 @@ export default {
           this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
           console.log(res.user);
           await this.getCurrentUser(res.user.uid);
-          this.$router.go();
           console.log("登入成功");
+          await this.$q.notify({
+            type: "positive",
+            message: `This is a "positive" type notification.`,
+            timeout: 3000,
+          });
+          this.$router.go();
           this.onClose();
-          this.$q.loading.hide();
+          // this.$q.loading.hide();
         }
       } catch (error) {
         console.error("登入失敗", error.code, error.message);
