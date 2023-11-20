@@ -33,9 +33,15 @@
         </q-card-actions>
       </q-card>
       <q-card>
-        <q-table :data="orderDetails" :columns="columns" row-key="name" />
+        <q-card-section v-if="order.orderDetails.length == 0">
+          <div class="text-h6 text-weight-bold text-primary">
+            目前無人點餐，快來搶餐吧！
+          </div>
+        </q-card-section>
+        <q-table :data="order.orderDetails" :columns="columns" row-key="id" v-else/>
       </q-card>
     </div>
+    <!-- 發起點餐視窗 -->
     <q-dialog
       v-model="createOrder"
       persistent
@@ -122,6 +128,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- 確認視窗 -->
     <q-dialog v-model="confirm">
       <q-card style="min-width: 90vw">
         <q-card-section>
@@ -141,6 +148,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- 點餐視窗 -->
     <q-dialog v-model="addOrder" persistent>
       <q-card style="width: 90vw">
         <q-card-section>
@@ -205,6 +213,7 @@ import {
   setDoc,
   doc,
   query,
+  or,
 } from "firebase/firestore";
 import app from "../components/setting/FirebaseConfig.vue";
 import moment from "moment";
@@ -217,8 +226,8 @@ export default {
       maximizedToggle: true,
       addOrder: false,
       pickedOrder: {},
-      orderInfo: {},
-      orderDetails: [],
+      orderInfo: {},//發起點餐資訊
+      orderDetails: [],//點餐資訊
       options: [
         "娃子",
         "布魯先生",
@@ -235,16 +244,30 @@ export default {
         {
           name: "name",
           label: "點餐人",
-          align: "left",
+          align: "center",
+          field: row => row.name,
+          format: val => `${val}`,
         },
         {
           name: "mainItem",
           align: "center",
           label: "餐點",
+          field: row => row.mainItem,
         },
-        { name: "secItem", label: "餐點配置" },
-        { name: "price", label: "價格" },
-        { name: "func", label: "操作" },
+        { name: "secItem",
+          label: "餐點配置", 
+          field: row => row.secItem,
+          align: "center"
+        },
+        { name: "price", 
+          label: "價格",
+          field: row => '$'+row.price,
+          align: "center"
+        },
+        // { name: "func", 
+        //   label: "操作", 
+        //   field: row => row.func
+        // },
       ],
     };
   },
@@ -262,9 +285,9 @@ export default {
   methods: {
     onClose() {
       this.createOrder = false;
-      this.orderInfo = {};
       this.confirm = false;
       this.addOrder = false;
+      this.orderInfo = {};
       this.pickedOrder = {};
     },
     notify() {
@@ -282,19 +305,34 @@ export default {
     },
     async getOrders() {
       const db = getFirestore(app);
-      const orderDoc = query(collection(db, "order"));
+      const orderDoc = collection(db, "order");
       const querySnapshot = await getDocs(orderDoc);
-      querySnapshot.forEach((doc) => {
-        this.orders.push({
-          id: doc.id,
-          orderName: doc.data().orderName ? doc.data().orderName : "無名",
-          orderOwner: doc.data().orderOwner ? doc.data().orderOwner : "無名",
-          orderDDL: doc.data().orderDDL
-            ? moment(doc.data().orderDDL.toDate()).format("YYYY-MM-DD HH:mm")
-            : "無時間",
-          orderNote: doc.data().orderNote ? doc.data().orderNote : "無備註",
-        });
+      querySnapshot.forEach(async (doc) => {
+      // Initialize orderDetails for each order
+      let orderDetails = [];
+    const orderDetailsSnapshot = await getDocs(collection(db, "order", doc.id, "orders"));
+    orderDetailsSnapshot.forEach((detailDoc) => {
+      console.log(detailDoc.data());
+      orderDetails.push({
+        name: detailDoc.data().name,
+        mainItem: detailDoc.data().mainItem,
+        secItem: detailDoc.data().secItem,
+        price: detailDoc.data().price,
+        func: "功能",
       });
+    });
+    this.orders.push({
+      id: doc.id,
+      orderName: doc.data().orderName ? doc.data().orderName : "無名",
+      orderOwner: doc.data().orderOwner ? doc.data().orderOwner : "無名",
+      orderDDL: doc.data().orderDDL
+        ? moment(doc.data().orderDDL.toDate()).format("YYYY-MM-DD HH:mm")
+        : "無時間",
+      orderNote: doc.data().orderNote ? doc.data().orderNote : "無備註",
+      orderDetails: orderDetails, // Use the local orderDetails for this order
+    });
+    console.log("full", this.orders);
+  });
     },
     async createanOrder() {
       this.$q.loading.show(); //loading
@@ -348,12 +386,13 @@ export default {
           }
         );
         console.log("success", newOrderDocRef);
-        this.onClose(); //關閉登入視窗
-        this.$q.loading.hide(); //關閉loading
+        window.location.reload(); 
+        this.onClose(); 
+        this.$q.loading.hide(); 
       } catch (error) {
         console.log(error);
-        this.onClose(); //關閉登入視窗
-        this.$q.loading.hide(); //關閉loading
+        this.onClose();
+        this.$q.loading.hide(); 
       }
     },
   },
