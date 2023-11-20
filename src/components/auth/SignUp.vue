@@ -120,7 +120,7 @@ export default {
         this.account.email,
         this.account.password
         );//註冊
-        console.log("註冊成功", toSignUp.user.uid)
+        // console.log("註冊成功", toSignUp.user.uid)
         const userDoc = await setDoc(doc(db, "user",toSignUp.user.uid), {
           name: this.account.name,
           email: this.account.email,
@@ -128,7 +128,7 @@ export default {
           payment: this.account.payment,
           bankAccount: this.account.bankAccount,
         });//寫入資料庫
-        console.log("寫入成功");
+        // console.log("寫入成功");
         const res = await signInWithEmailAndPassword(
           auth,
           this.account.email,
@@ -136,7 +136,7 @@ export default {
         );//登入
         localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
         this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
-        console.log("登入成功",res.user);
+        // console.log("登入成功",res.user);
         window.location.reload();//重新整理頁面
         this.onClose();//關閉登入視窗
         this.$q.loading.hide();//關閉loading

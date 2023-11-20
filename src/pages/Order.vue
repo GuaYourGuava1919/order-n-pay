@@ -1,27 +1,131 @@
 <template>
   <div>
+    <div class="q-mx-md q-mt-md q-pa-md flex items-center justify-between">
+      <div class="text-h6 flex items-center text-weight-bold text-primary ">
+        <q-icon name="local_dining" size="30px"></q-icon>
+        <div class="">點餐功能</div>
+      </div>
+      <q-btn
+        class="bg-primary text-white"
+        push
+        label="發起點餐"
+        @click="createOrder = true"
+      />
+    </div>
     <div class="q-pa-md" v-for="order in orders" :key="order.id">
-      <q-card class="my-card bg-accent text-secondary">
+      <q-card class="my-card bg-accent text-dark">
         <q-card-section>
-          <div class="text-h6">{{ order.orderName }}</div>
-          <div class="text-subtitle2">{{ order.orderOwner }}</div>
+          <div class="text-h6 text-weight-bold">{{ order.orderName }}</div>
+          <div class="text-subtitle2">建單人：{{ order.orderOwner }}</div>
+          <div class="text-subtitle2">截止時間：{{ order.orderDDL }}</div>
+          <div class="text-subtitle2">已點餐人數：</div>
+          <div class="text-subtitle2 text-negative text-weight-bold">備註：{{ order.orderNote }}</div>
         </q-card-section>
-        <q-card-section>
-          <div class="text-h6">截止時間：{{ order.orderDDL }}</div>
-        </q-card-section>
-        <q-separator dark />
-
-        <q-card-actions>
-          <q-btn flat>Action 1</q-btn>
-          <q-btn flat>Action 2</q-btn>
+        <q-card-actions class="q-pb-md" align="right">
+          <q-btn class="text-white bg-primary q-px-md" rounded push >我要點餐</q-btn>
         </q-card-actions>
       </q-card>
     </div>
+    <q-dialog
+      v-model="createOrder"
+      persistent
+      :maximized="maximizedToggle"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card class="">
+        <q-bar class="bg-primary text-white">
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-card-section class="flex  items-center text-primary">
+          <q-icon name="post_add" size="35px" ></q-icon>
+          <div class="text-h6 q-pl-md text-weight-bold">發起點餐</div>
+        </q-card-section>
+        <q-card-section>
+          <div class="text-weight-bold">目前建單人：{{currentUserInfo.name + "【" + currentUserInfo.email + "】"}}</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-form @submit="confirmOrder">
+              <q-select
+                filled 
+                v-model="orderInfo.orderName" 
+                :options="options" 
+                label="請輸入欲訂餐廳名稱"  
+                class="q-mb-md"
+                hide-bottom-space
+                lazy-rules
+                :rules="[
+                  (val) => !!val || '欲訂餐廳名稱不能為空',
+                ]"/>
+                <q-input
+                v-if="orderInfo.orderName == '其他'"
+                class="q-mb-md"
+                v-model="orderInfo.orderNameEdit"
+                label="請輸入自訂餐聽名稱"
+                hide-bottom-space
+                lazy-rules
+                :rules="[
+                  (val) => !!val || '自訂餐聽名稱不能為空',
+                ]"
+              />
+              <q-input
+                class="q-mb-md"
+                filled
+                v-model="orderInfo.orderDDLdate"
+                label="請輸入截止日期"
+                type="date"
+                hide-bottom-space
+                lazy-rules
+                :rules="[
+                  (val) => !!val || '截止日期不能為空',
+                ]"
+              />
+              <q-input
+                class="q-mb-md"
+                filled
+                v-model="orderInfo.orderDDLtime"
+                label="請輸入截止時間"
+                type="time"
+                hide-bottom-space
+                lazy-rules
+                :rules="[
+                  (val) => !!val || '截止時間不能為空',
+                ]"
+              />
+              <q-input
+                class="q-mb-md"
+                filled
+                v-model="orderInfo.orderNote"
+                label="備註(選填)"
+                hint="例如：『記得選醬料要啥』、『點套餐的記得點飲料』"
+                hide-bottom-space
+              />
+            <q-card-actions align="right" class="text-primary q-ma-md">
+              <q-btn label="建立" type="submit" color="primary" class="q-px-md"/>
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="confirm">
+      <q-card style="min-width: 90vw">
+        <q-card-section>
+          <div class="text-h6 text-weight-bold text-primary">確定要送出嗎？</div>
+          <div class="text-subtitle2">送出後無法更改，因為我懶得做編輯</div>
+        </q-card-section>
+        <q-card-actions align="right" class="text-primary q-mb-sm">
+          <q-btn label="確定" color="primary" class="q-px-md" rounded @click="createanOrder"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-import { collection, getDocs, getFirestore, query } from "firebase/firestore";
+import { addDoc, collection, getDocs, getFirestore, query } from "firebase/firestore";
 import app from "../components/setting/FirebaseConfig.vue";
 import moment from "moment";
 export default {
@@ -29,14 +133,43 @@ export default {
   data() {
     return {
       orders: [],
+      createOrder: false,
+      maximizedToggle: true,
+      orderInfo:{},
+      options:['娃子','布魯先生','豪客來牛排','熊賀炒飯','果汁霸','Costco','麥當勞','雞加酒','其他'],
+      confirm:false,
     };
   },
   computed: {
     orderDate() {
       return moment(this.orderDDL).format("YYYY-MM-DD HH:mm");
     },
+    currentUserInfo() {
+      return this.$store.state.currentUserInfo;
+    },
+    currentUser() {
+      return this.$store.state.currentUser;
+    },
   },
   methods: {
+    onClose() {
+      this.createOrder = false;
+      this.orderInfo = {};
+      this.confirm = false;
+    },
+    notify() {
+      const status = localStorage.getItem("currentUser");
+      if(status){
+        this.$q.notify({
+        message: '已登入',
+        color: 'positive',
+        icon: 'login'
+      })
+    }
+    },
+    confirmOrder(){
+      this.confirm = true;
+    },
     async getOrders() {
       const db = getFirestore(app);
       // const orderDoc = await getDocs(collection(db, "order"));
@@ -50,9 +183,32 @@ export default {
           orderDDL: doc.data().orderDDL
             ? moment(doc.data().orderDDL.toDate()).format("YYYY-MM-DD HH:mm")
             : "無時間",
+          orderNote: doc.data().orderNote ? doc.data().orderNote : "無備註",
         });
-        console.log(this.orders);
+        // console.log(this.orders);
       });
+    },
+    async createanOrder() {
+      this.$q.loading.show();//loading
+      try{
+        const db = getFirestore(app);
+        const orderDoc = await addDoc(collection(db, "order",), {
+          orderName: this.orderInfo.orderName == '其他' ? this.orderInfo.orderNameEdit : this.orderInfo.orderName,
+          orderOwner: this.currentUserInfo.name,
+          orderOwnerID: this.currentUser.id,
+          orderDDL: new Date(this.orderInfo.orderDDLdate + " " + this.orderInfo.orderDDLtime),
+          orderNote: this.orderInfo.orderNote? this.orderInfo.orderNote:'無備註',
+        });//寫入資料庫
+        console.log("success", orderDoc);
+        window.location.reload();//重新整理頁面
+        this.onClose();//關閉登入視窗
+        this.$q.loading.hide();//關閉loading
+      }catch(error){
+        console.log(error);
+        this.onClose();//關閉登入視窗
+        this.$q.loading.hide();//關閉loading
+      }
+      
     },
   },
   mounted() {

@@ -36,6 +36,7 @@
       show-if-above
       bordered
       content-class="bg-grey-1"
+      v-if="uid"
     >
       <q-list>
         <q-item-label header class="text-grey-8"> 功能列表 </q-item-label>
@@ -160,17 +161,17 @@ export default {
       const db = getFirestore(app);
       const userDoc = await getDoc(doc(db, "user", v));
       this.$store.commit("setCurrentUserInfo", userDoc.data());
-      console.log("讀取成功", userDoc.data());
+      // console.log("讀取成功", userDoc.data());
     },
     //更新時檢查是否登入
     async checkLogin() {
       const res = localStorage.getItem("currentUser");
       if (res) {
         const currentUser = JSON.parse(res);
-        console.log("已登入", currentUser);
+        // console.log("已登入", currentUser);
         this.$store.commit("setCurrentUser", currentUser);
         await this.getCurrentUser(currentUser.uid);
-        console.log("已讀取", this.$store.state.currentUserInfo);
+        // console.log("已讀取", this.$store.state.currentUserInfo);
       } else {
         console.log("尚未登入");
       }

@@ -105,7 +105,7 @@ export default {
       const db = getFirestore(app);
       const userDoc = await getDoc(doc(db, "user", v));
       this.$store.commit("setCurrentUserInfo", userDoc.data());
-      console.log("讀取成功", userDoc.data());
+      // console.log("讀取成功", userDoc.data());
     },
     async signIn() {
       const auth = getAuth(app);
@@ -120,21 +120,15 @@ export default {
           localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
           this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
           await this.getCurrentUser(res.user.uid);//將使用者資料存入vuex
-          console.log("登入成功",res.user);
+          // console.log("登入成功",res.user);
           window.location.reload();//重新整理頁面
           this.onClose();//關閉登入視窗
           this.$q.loading.hide();//關閉loading
         }
       } catch (error) {
-        console.error("登入失敗", error.code, error.message);
-        this.loginError = "登入失敗：" + error.message;
-        if (error.code === "auth/user-not-found") {
-          this.loginError = "使用者不存在";
-        } else if (error.code === "auth/wrong-password") {
-          this.loginError = "密碼錯誤";
-        } else {
-          this.loginError = "尚未註冊，請先註冊";
-        }
+        // console.error("登入失敗", error.code, error.message);
+        this.loginError = "登入失敗，請檢查帳號密碼是否正確" 
+        this.$q.loading.hide();//關閉loading
       }
     },
     toggle() {
