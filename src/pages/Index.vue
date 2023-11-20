@@ -61,6 +61,7 @@
           </q-carousel-slide>
         </q-carousel>
       </div>
+      <div class=""></div>
     </div>
     <img
       alt="Silence Suzuka"
@@ -71,7 +72,6 @@
 </template>
 
 <script>
-
 export default {
   name: "PageIndex",
   data() {
@@ -82,13 +82,13 @@ export default {
   methods: {
     notify() {
       const status = localStorage.getItem("currentUser");
-      if(status){
+      if (status) {
         this.$q.notify({
-        message: '已登入',
-        color: 'positive',
-        icon: 'login'
-      })
-    }
+          message: "已登入",
+          color: "positive",
+          icon: "login",
+        });
+      }
     },
   },
   mounted() {

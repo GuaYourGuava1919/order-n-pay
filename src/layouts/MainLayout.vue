@@ -12,7 +12,7 @@
           v-if="uid"
         />
         <q-btn flat dense round icon="menu" v-else @click="alert = true" />
-        <q-toolbar-title> Order-n-Pay </q-toolbar-title>
+        <q-toolbar-title @click="goto()"> Order-n-Pay </q-toolbar-title>
         <q-btn
           class="q-mr-md"
           outline
@@ -148,11 +148,10 @@ export default {
           this.$router.push("/");
         }
         this.$q.notify({
-        message: '已登出',
-        color: 'positive',
-        icon: 'logout'
-      })
-
+          message: "已登出",
+          color: "positive",
+          icon: "logout",
+        });
       } catch (error) {
         console.error("登出失敗", error);
       }
@@ -174,6 +173,11 @@ export default {
         // console.log("已讀取", this.$store.state.currentUserInfo);
       } else {
         console.log("尚未登入");
+      }
+    },
+    goto() {
+      if (this.$route.path != "/") {
+        this.$router.push("/");
       }
     },
   },
