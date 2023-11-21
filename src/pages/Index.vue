@@ -1,25 +1,27 @@
 <template>
   <q-page class="">
     <div class="q-ma-md">
-      <q-card class="bg-secondary text-white" v-if="uid">
-        <q-card-section class="flex items-center q-pb-none">
-          <q-avatar class="q-mr-md">
-            <img src="https://cdn.quasar.dev/img/avatar.png" />
-          </q-avatar>
-          <div class="text-h6 text-weight-bold">個人資料</div>
-        </q-card-section>
-        <q-card-section class="info">
-          <div>姓名：{{ currentUserInfo.name }}</div>
-          <div>帳號：{{ currentUserInfo.email }}</div>
-          <div>常用付款方式：{{ currentUserInfo.payment }}</div>
-          <div>
-            常用銀行帳號：{{
-              currentUserInfo.bankAccount ? currentUserInfo.bankAccount : "暫無"
-            }}
+      <!-- 本日投票結果 -->
+      <div class="" v-if="uid">
+        <div class="text-h6 q-ma-md text-weight-bold">
+          本日【{{ today }}】投票結果
+          <div class="text-subtitle2 text-weight-bold">
+            投票時間：<br />午餐：每日11:00前、晚餐：每日18:00前
           </div>
-          <!-- <div>權限：{{ currentUserInfo.auth }}</div> -->
-        </q-card-section>
-      </q-card>
+          <div
+            class="text-subtitle2 text-weight-bold"
+            v-if="restTime.hours == 0"
+          >
+            本日投票已截止
+          </div>
+          <div class="text-subtitle2 text-weight-bold" v-else>
+            距離投票截止時間：{{ restTime.hours }}小時{{ restTime.minutes }}分鐘
+          </div>
+        </div>
+
+        <DailyVote />
+      </div>
+
       <div v-else-if="!uid">
         <q-carousel
           v-model="slide"
@@ -63,21 +65,28 @@
       </div>
       <div class=""></div>
     </div>
-    <img
+    <!-- <img
       alt="Silence Suzuka"
       src="https://gametora.com/images/umamusume/characters/chara_stand_1002_100201.png"
       class="silence"
-    />
+    /> -->
   </q-page>
 </template>
 
 <script>
+import DailyVote from "../components/DailyVote.vue";
+import moment from "moment";
 export default {
   name: "PageIndex",
   data() {
     return {
       slide: "style",
+      today: moment().format("YYYY-MM-DD"),
+      restTime: {},
     };
+  },
+  components: {
+    DailyVote,
   },
   methods: {
     notify() {
@@ -90,9 +99,26 @@ export default {
         });
       }
     },
+    timeCountdown() {
+      const now = moment();
+      if (now.hour() < 11) {
+        const targetTime = moment().set({ hour: 11, minute: 0, second: 0 });
+        const duration = moment.duration(targetTime.diff(now));
+        this.restTime.hours = duration.hours();
+        this.restTime.minutes = duration.minutes();
+      } else if (now.hour() < 18) {
+        const targetTime = moment().set({ hour: 18, minute: 0, second: 0 });
+        const duration = moment.duration(targetTime.diff(now));
+        this.restTime.hours = duration.hours();
+        this.restTime.minutes = duration.minutes();
+      } else {
+        this.restTime.hours = 0;
+      }
+    },
   },
   mounted() {
     this.notify();
+    this.timeCountdown();
   },
   computed: {
     currentUserInfo() {
@@ -109,7 +135,7 @@ export default {
 .silence {
   width: 200px;
   height: 200px;
-  position: absolute;
+  position: fixed;
   bottom: 0;
 }
 .info {
