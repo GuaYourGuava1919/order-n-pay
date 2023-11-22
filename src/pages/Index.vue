@@ -1,15 +1,15 @@
 <template>
-  <q-page class="">
-    <div class="q-ma-md">
-      <!-- 本日投票結果 -->
-      <div class="" v-if="uid">
-        <div class="text-h6 q-ma-md text-weight-bold">
+  <!-- 登入後 -->
+  <q-page v-if="uid">
+    <div class="q-ma-md" >
+      <div class="" >
+        <div class="text-h6 q-ma-md ">
           本日【{{ today }}】投票結果
-          <div class="text-subtitle2 text-weight-bold">
+          <div class="text-subtitle2">
             投票時間：<br />午餐：每日11:00前、晚餐：每日18:00前
           </div>
           <div
-            class="text-subtitle2 text-weight-bold"
+            class="text-subtitle2 text-weight-bold text-negative"
             v-if="restTime.hours == 0"
           >
             本日投票已截止
@@ -18,58 +18,31 @@
             距離投票截止時間：{{ restTime.hours }}小時{{ restTime.minutes }}分鐘
           </div>
         </div>
-
         <DailyVote />
       </div>
-
-      <div v-else-if="!uid">
-        <q-carousel
-          v-model="slide"
-          transition-prev="scale"
-          transition-next="scale"
-          swipeable
-          animated
-          control-color="white"
-          navigation
-          padding
-          arrows
-          height="200px"
-          class="bg-secondary text-white shadow-1 rounded-borders"
-        >
-          <q-carousel-slide name="style" class="column no-wrap flex-center">
-            <q-icon name="local_dining" size="40px" />
-            <div class="q-mt-md text-center">
-              <span class="text-h6">點餐功能</span
-              ><br />開單、登記餐點及常用餐廳資訊
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="tv" class="column no-wrap flex-center">
-            <q-icon name="attach_money" size="40px" />
-            <div class="q-mt-md text-center">
-              <span class="text-h6">收付帳功能</span><br />收錢、還錢、賒帳
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="layers" class="column no-wrap flex-center">
-            <q-icon name="how_to_vote" size="40px" />
-            <div class="q-mt-md text-center">
-              <span class="text-h6">吃啥投票區</span><br />投票、查看投票結果
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="map" class="column no-wrap flex-center">
-            <q-icon name="casino" size="40px" />
-            <div class="q-mt-md text-center">
-              <span class="text-h6">命運齒輪</span><br />抽人取餐、查看抽籤結果
-            </div>
-          </q-carousel-slide>
-        </q-carousel>
-      </div>
-      <div class=""></div>
     </div>
-    <!-- <img
-      alt="Silence Suzuka"
-      src="https://gametora.com/images/umamusume/characters/chara_stand_1002_100201.png"
-      class="silence"
-    /> -->
+  </q-page>
+  <!-- 登入前 -->
+  <q-page v-else class="flex column justify-center">
+    <div>
+         <img
+          alt="Silence Suzuka"
+          src="https://64.media.tumblr.com/2352db7932e0b2fe0ccf57c70b9a5116/tumblr_pw14ilEkcJ1y9u4blo1_1280.pnj"
+          class="silence"
+          />
+          <div class="text-center text-secondary q-ma-md">
+            <div class="text-h6 text-weight-bold">登入才能點餐！</div>
+            <div class="text-subtitle2">不要問我為啥放鈴鹿，因為鈴鹿可愛！</div>
+          </div>
+          <img
+          alt="Silence Suzuka"
+          src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3566b331-1e98-4017-a67e-937c9a84fd99/dcft54d-8956bd5c-6de2-4c2b-8acf-dd3066719eaf.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzM1NjZiMzMxLTFlOTgtNDAxNy1hNjdlLTkzN2M5YTg0ZmQ5OVwvZGNmdDU0ZC04OTU2YmQ1Yy02ZGUyLTRjMmItOGFjZi1kZDMwNjY3MTllYWYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.6DoXIXIz9a7abPJpDT6tS0EuzKJj8Cdwez0QkaZcwm8"
+          class="silence"
+          />
+    </div>
+    <div class="text-center footer bg-primary text-white">
+        <div class="">Order-n-Pay © 2023 Nicole & Nelson</div>
+    </div>
   </q-page>
 </template>
 
@@ -82,7 +55,10 @@ export default {
     return {
       slide: "style",
       today: moment().format("YYYY-MM-DD"),
-      restTime: {},
+      restTime: {
+        hours: 0,
+        minutes: 0,
+      },
     };
   },
   components: {
@@ -106,13 +82,16 @@ export default {
         const duration = moment.duration(targetTime.diff(now));
         this.restTime.hours = duration.hours();
         this.restTime.minutes = duration.minutes();
+        this.$store.commit("setRestTime",true);
       } else if (now.hour() < 18) {
         const targetTime = moment().set({ hour: 18, minute: 0, second: 0 });
         const duration = moment.duration(targetTime.diff(now));
         this.restTime.hours = duration.hours();
         this.restTime.minutes = duration.minutes();
+        this.$store.commit("setRestTime",true);
       } else {
         this.restTime.hours = 0;
+        this.$store.commit("setRestTime",false);
       }
     },
   },
@@ -133,12 +112,14 @@ export default {
 
 <style>
 .silence {
-  width: 200px;
-  height: 200px;
-  position: fixed;
-  bottom: 0;
+  width: 100%;
 }
 .info {
   font-size: 16px;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 </style>

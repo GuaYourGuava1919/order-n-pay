@@ -17,7 +17,6 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     state: {
-      count: 3,
       openSignUp: false,
       openSignIn: false,
       currentUser: {
@@ -28,63 +27,70 @@ export default function (/* { ssrContext } */) {
         id: '',
         name: '讀取中...',
         email: '讀取中...',
-        
-      }
+      },
+      restTime: true,
     },
     mutations: {
-      increment (state) {
-        state.count++
-      },
       //註冊
-      toggleOpenSignUp (state) {
+      openSignUpDialog (state) {
         state.openSignUp = !state.openSignUp
       },
       setOpenSignUp(state, payload) {
         state.openSignUp = payload
       },
       //登入
-      toggleOpenSignIn (state) {
+      openSignInDialog (state) {
         state.openSignIn = !state.openSignIn
       },
       setOpenSignIn(state, payload) {
         state.openSignIn = payload
       },
+      //設定使用者
       setCurrentUser(state, payload) {
-        // state.currentUser = payload
         state.currentUser.id = payload.uid
         state.currentUser.email = payload.email
       },
+      //設定使用者資訊
+      setCurrentUserInfo(state, payload) {
+        state.currentUserInfo = payload
+      },
+      //清除使用者
       clearCurrentUser(state) {
         state.currentUser = {}
         state.currentUserInfo = {}
       },
-      setCurrentUserInfo(state, payload) {
-        state.currentUserInfo = payload
+      //設定剩餘時間
+      setRestTime(state, payload) {
+        state.restTime = payload
       }
+      
     },
     actions: {
-      increment (context) {
-        context.commit('increment')
+      //註冊
+      openSignUpDialog  (context) {
+        context.commit('openSignUpDialog')
       },
-      toggleOpenSignUp  (context) {
-        context.commit('toggleOpenSignUp')
+      //登入
+      openSignInDialog  (context) {
+        context.commit('openSignInDialog')
       },
-      toggleOpenSignIn  (context) {
-        context.commit('toggleOpenSignIn')
-      },
+      //設定使用者
       setCurrentUser (context, payload) {
         context.commit('setCurrentUser', payload)
       },
+      //設定使用者資訊
+      setCurrentUserInfo (context, payload) {
+        context.commit('setCurrentUserInfo', payload)
+      },
+      //清除使用者
       clearCurrentUser (context) {
         context.commit('clearCurrentUser')
       },
-      setCurrentUserInfo (context, payload) {
-        context.commit('setCurrentUserInfo', payload)
+      //設定剩餘時間
+      setRestTime (context, payload) {
+        context.commit('setRestTime', payload)
       }
     },
-
-    // enable strict mode (adds overhead!)
-    // for dev mode only
     strict: process.env.DEBUGGING
   })
 

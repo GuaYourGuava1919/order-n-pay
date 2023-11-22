@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated >
       <q-toolbar>
         <q-btn
           flat
@@ -14,7 +14,6 @@
         <q-btn flat dense round icon="menu" v-else @click="alert = true" />
         <q-toolbar-title @click="goto()"> Order-n-Pay </q-toolbar-title>
         <q-btn
-          class="q-mr-md"
           outline
           rounded
           label="登出"
@@ -22,9 +21,9 @@
           v-if="uid"
         />
         <q-btn
-          class="q-mr-md"
-          outline
+          push
           rounded
+          color="secondary"
           label="登入/註冊"
           @click="toggle"
           v-else
@@ -50,10 +49,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
     <SignUp />
     <SignIn />
-
+    <!-- 需登入提醒 -->
     <q-dialog v-model="alert">
       <q-card>
         <q-card-section>
@@ -97,18 +95,6 @@ const linksData = [
     icon: "how_to_vote",
     link: "https://chat.quasar.dev",
   },
-  {
-    title: "抽籤筒",
-    caption: "抽籤、查看抽籤結果",
-    icon: "casino",
-    link: "https://forum.quasar.dev",
-  },
-  {
-    title: "個人資料",
-    caption: "個人資料、修改密碼、登出",
-    icon: "person",
-    link: "https://awesome.quasar.dev",
-  },
 ];
 
 export default {
@@ -135,7 +121,7 @@ export default {
   },
   methods: {
     toggle() {
-      this.$store.commit("toggleOpenSignIn");
+      this.$store.commit("openSignInDialog");
     },
     async tosignOut() {
       try {

@@ -264,10 +264,6 @@ export default {
           field: row => '$'+row.price,
           align: "center"
         },
-        // { name: "func", 
-        //   label: "操作", 
-        //   field: row => row.func
-        // },
       ],
     };
   },

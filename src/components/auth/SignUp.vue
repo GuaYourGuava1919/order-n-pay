@@ -31,7 +31,7 @@
             class="q-mb-md"
             filled
             v-model="account.bankAccount"
-            label="請輸入常用銀行帳號"
+            label="請輸入常用銀行帳號(選填)"
           />
           <q-input
             class="q-mb-md"
@@ -106,43 +106,48 @@ export default {
     },
   },
   methods: {
+    //關閉註冊視窗，並清空欄位資料
     onClose() {
       this.account={};
-      this.open = false;
     },
     async signUp() {
       try{
-        this.$q.loading.show();//loading
+        this.$q.loading.show();
         const auth = getAuth(app);
         const db = getFirestore(app);
+        //註冊API
         const toSignUp = await createUserWithEmailAndPassword(
         auth,
         this.account.email,
         this.account.password
-        );//註冊
-        // console.log("註冊成功", toSignUp.user.uid)
+        );
+        //寫入使用者資料
         const userDoc = await setDoc(doc(db, "user",toSignUp.user.uid), {
           name: this.account.name,
           email: this.account.email,
           auth: "normal",
           payment: this.account.payment,
           bankAccount: this.account.bankAccount,
-        });//寫入資料庫
-        // console.log("寫入成功");
+        });
+        //自動登入
         const res = await signInWithEmailAndPassword(
           auth,
           this.account.email,
           this.account.password
-        );//登入
+        );
         localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
         this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
-        // console.log("登入成功",res.user);
-        window.location.reload();//重新整理頁面
-        this.onClose();//關閉登入視窗
-        this.$q.loading.hide();//關閉loading
+        window.location.reload();
+        this.onClose();
+        this.$q.loading.hide();
       }
       catch(error){
         console.log(error);
+        this.$q.notify({
+          message: "註冊失敗",
+          color: "negative",
+          icon: "error",
+        });
       }
     },
   },

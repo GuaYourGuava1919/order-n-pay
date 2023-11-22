@@ -40,7 +40,6 @@
             :rules="[
               (val) => !!val || '密碼不能為空',
               (val) => (val && val.length >= 6) || '密碼至少需要6個字符',
-              // val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/.test(val) || '密碼需要包含至少一個小寫字母、一個大寫字母和一個數字'
             ]"
           />
         </q-card-section>
@@ -62,7 +61,7 @@
             color="primary"
             flat
             class="q-ml-sm"
-            @click="toggle"
+            @click="switchDialog"
           />
           <q-btn label="登入" type="submit" color="primary" />
         </q-card-actions>
@@ -97,16 +96,18 @@ export default {
     },
   },
   methods: {
+    //關閉登入視窗，清空帳號密碼欄位
     onClose() {
       this.open = false;
       this.account={};
     },
-    async getCurrentUser(v) {
+    //取得使用者資料
+    async getCurrentUserInfo(v) {
       const db = getFirestore(app);
       const userDoc = await getDoc(doc(db, "user", v));
       this.$store.commit("setCurrentUserInfo", userDoc.data());
-      // console.log("讀取成功", userDoc.data());
     },
+    //登入
     async signIn() {
       const auth = getAuth(app);
       try {
@@ -117,23 +118,21 @@ export default {
           this.account.password
         );
         if (res.user) {
-          localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將使用者uid存入localStorage
-          this.$store.commit("setCurrentUser", res.user); // 將使用者存入vuex
-          await this.getCurrentUser(res.user.uid);//將使用者資料存入vuex
-          // console.log("登入成功",res.user);
+          localStorage.setItem("currentUser", JSON.stringify(res.user)); // 將當前使用者存入localStorage
+          this.$store.commit("setCurrentUser", res.user); // 將當前使用者存入vuex
+          await this.getCurrentUserInfo(res.user.uid);//取得使用者資料
           window.location.reload();//重新整理頁面
-          this.onClose();//關閉登入視窗
-          this.$q.loading.hide();//關閉loading
+          this.onClose();
+          this.$q.loading.hide();
         }
       } catch (error) {
-        // console.error("登入失敗", error.code, error.message);
         this.loginError = "登入失敗，請檢查帳號密碼是否正確" 
-        this.$q.loading.hide();//關閉loading
+        this.$q.loading.hide();
       }
     },
-    toggle() {
-      this.$store.commit("toggleOpenSignUp");
-      this.$store.commit("toggleOpenSignIn");
+    switchDialog() {
+      this.$store.commit("openSignUpDialog");
+      this.$store.commit("openSignInDialog");
     },
   },
   mounted() {},
