@@ -9,13 +9,15 @@
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "deploy": "gh-pages -d dist/spa -b gh-pages"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "core-js": "^3.6.5",
     "firebase": "^10.6.0",
+    "gh-pages": "^6.1.0",
     "quasar": "^1.0.0"
   },
   "devDependencies": {
