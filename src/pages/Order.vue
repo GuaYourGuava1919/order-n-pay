@@ -255,11 +255,11 @@ export default {
           field: row => row.mainItem,
         },
         { name: "secItem",
-          label: "餐點配置", 
+          label: "餐點配置",
           field: row => row.secItem,
           align: "center"
         },
-        { name: "price", 
+        { name: "price",
           label: "價格",
           field: row => '$'+row.price,
           align: "center"
@@ -382,13 +382,13 @@ export default {
           }
         );
         console.log("success", newOrderDocRef);
-        window.location.reload(); 
-        this.onClose(); 
-        this.$q.loading.hide(); 
+        window.location.reload();
+        this.onClose();
+        this.$q.loading.hide();
       } catch (error) {
         console.log(error);
         this.onClose();
-        this.$q.loading.hide(); 
+        this.$q.loading.hide();
       }
     },
   },

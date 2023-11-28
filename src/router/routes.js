@@ -8,7 +8,14 @@ const routes = [
     path: "/order",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/Order.vue") },
+      { path: "", component: () => import("pages/OrderMeal.vue") },
+    ],
+  },
+  {
+    path: "/paythebill",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/PaytheBill.vue") },
     ],
   },
   {
@@ -18,7 +25,6 @@ const routes = [
       { path: "", component: () => import("pages/ManagerZone.vue") },
     ],
   },
-
 
   {
     path: "*",

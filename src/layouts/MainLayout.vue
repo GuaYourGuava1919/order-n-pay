@@ -87,7 +87,7 @@ const linksData = [
     title: "收付帳功能",
     caption: "收錢、還錢、賒帳",
     icon: "attach_money",
-    link: "https://github.com/quasarframework",
+    link: "/paythebill",
   },
   {
     title: "管理員區",
