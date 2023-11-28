@@ -90,10 +90,10 @@ const linksData = [
     link: "https://github.com/quasarframework",
   },
   {
-    title: "投票區",
-    caption: "投票、查看投票結果",
-    icon: "how_to_vote",
-    link: "https://chat.quasar.dev",
+    title: "管理員區",
+    caption: "編輯餐廳資訊",
+    icon: "admin_panel_settings",
+    link: "/manager",
   },
 ];
 
@@ -134,8 +134,8 @@ export default {
           this.$router.push("/");
         }
         this.$q.notify({
-          message: "已登出",
-          color: "positive",
+          message: "登出成功",
+          color: "warning",
           icon: "logout",
         });
       } catch (error) {
@@ -146,17 +146,14 @@ export default {
       const db = getFirestore(app);
       const userDoc = await getDoc(doc(db, "user", v));
       this.$store.commit("setCurrentUserInfo", userDoc.data());
-      // console.log("讀取成功", userDoc.data());
     },
     //更新時檢查是否登入
     async checkLogin() {
       const res = localStorage.getItem("currentUser");
       if (res) {
         const currentUser = JSON.parse(res);
-        // console.log("已登入", currentUser);
         this.$store.commit("setCurrentUser", currentUser);
         await this.getCurrentUser(currentUser.uid);
-        // console.log("已讀取", this.$store.state.currentUserInfo);
       } else {
         console.log("尚未登入");
       }
