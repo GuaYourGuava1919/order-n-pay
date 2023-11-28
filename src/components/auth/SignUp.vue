@@ -128,6 +128,8 @@ export default {
           auth: "normal",
           payment: this.account.payment,
           bankAccount: this.account.bankAccount,
+          voteRight: true,
+          voteTo: "",
         });
         //自動登入
         const res = await signInWithEmailAndPassword(

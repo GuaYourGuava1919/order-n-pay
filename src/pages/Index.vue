@@ -6,13 +6,22 @@
         <div class="text-h6 q-ma-md ">
           本日【{{ today }}】投票結果
           <div class="text-subtitle2">
-            投票時間：<br />午餐：每日11:00前、晚餐：每日18:00前
+            投票時間：<br />午餐：11:00前、晚餐：18:00前
+          </div>
+          <div class="text-subtitle2 text-negative">
+            13:00將重置投票權限
           </div>
           <div
             class="text-subtitle2 text-weight-bold text-negative"
-            v-if="restTime.hours == 0"
+            v-if="restTime.minutes == 0"
           >
-            本日投票已截止
+            本次投票已截止
+          </div>
+          <div
+            class="text-subtitle2 text-weight-bold text-negative"
+            v-else-if="!currentUserInfo.voteRight"
+          >
+            今日已投票給 {{ currentUserInfo.voteTo }}
           </div>
           <div class="text-subtitle2 text-weight-bold" v-else>
             距離投票截止時間：{{ restTime.hours }}小時{{ restTime.minutes }}分鐘
@@ -49,6 +58,8 @@
 <script>
 import DailyVote from "../components/DailyVote.vue";
 import moment from "moment";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
+import app from "../components/setting/FirebaseConfig.vue"; 
 export default {
   name: "PageIndex",
   data() {
@@ -75,15 +86,23 @@ export default {
         });
       }
     },
-    timeCountdown() {
+    async timeCountdown() {
       const now = moment();
-      if (now.hour() < 11) {
-        const targetTime = moment().set({ hour: 11, minute: 0, second: 0 });
-        const duration = moment.duration(targetTime.diff(now));
-        this.restTime.hours = duration.hours();
-        this.restTime.minutes = duration.minutes();
-        this.$store.commit("setRestTime",true);
-      } else if (now.hour() < 18) {
+      if (now.hour() < 11) {//判斷時間:小於11點
+        const targetTime = moment().set({ hour: 11, minute: 0, second: 0 });//設定時間
+        const duration = moment.duration(targetTime.diff(now));//計算時間差
+        this.restTime.hours = duration.hours();//取得小時
+        this.restTime.minutes = duration.minutes();//取得分鐘
+        this.$store.commit("setRestTime",true);//將時間傳入vuex
+      } 
+      else if ( now.hour() == 13 && now.minute() == 0 ){//判斷時間:13點
+        const db = getFirestore(app);
+        const docRef = doc(db, "user", this.uid);
+        await setDoc(docRef, { voteRight: true ,voteTo:""}, { merge: true });
+        console.log("已重置投票權限");
+        this.$store.commit("setRestTime",false);
+      }
+      else if (now.hour() > 12 && now.hour() < 18) {
         const targetTime = moment().set({ hour: 18, minute: 0, second: 0 });
         const duration = moment.duration(targetTime.diff(now));
         this.restTime.hours = duration.hours();

@@ -11,13 +11,13 @@
         <div class="row items-center no-wrap">
           <div class="col">
             <div class="text-h6 text-weight-bold">{{ res.name }}</div>
-            <div class="flex items-center" v-if="res.phone.length < 15">
+            <div class="flex items-center" v-if="res.phone">
               <div class="text-subtitle2">訂餐電話：</div>
               <q-btn unelevated rounded color="primary" icon="phone" size="sm" :href="'tel:' + res.phone"/>
             </div>
             <div class="flex items-center" v-else>
               <div class="text-subtitle2">訂餐網址：</div>
-              <q-btn unelevated rounded color="primary" icon="open_in_new" size="sm" @click="goWeb(res.phone)"/>
+              <q-btn unelevated rounded color="primary" icon="open_in_new" size="sm" @click="goWeb(res.url)"/>
             </div>
             <div class="text-subtitle2">營業時間：{{ res.openTime }}</div>
           </div>
@@ -25,10 +25,11 @@
       </q-card-section>
       <q-separator />
       <q-card-actions class="flex justify-between q-ma-md">
-        <div class="text-primary">得票數：</div>
-        <q-btn push color="primary" class="q-px-md" @click="toVote(res.id)" v-if="restTime"
+        <div class="text-primary text-h6">得票數：{{res.NoV}}</div>
+        <q-btn push color="primary" class="q-px-md" @click="toVote(res)" v-if="restTime == true  && currentUserInfo.voteRight == true"
           >投票</q-btn
         >
+        <q-btn color="primary" outline class="q-px-md" disable v-else-if="!currentUserInfo.voteRight">已投票</q-btn>
         <q-btn color="primary" outline class="q-px-md" disable v-else>投票已截止</q-btn>
       </q-card-actions>
     </q-card>
@@ -50,7 +51,13 @@ export default {
   computed: {
     restTime(){
       return this.$store.state.restTime
-    }
+    },
+    currentUserInfo() {
+      return this.$store.state.currentUserInfo;
+    },
+    currentUser() {
+      return this.$store.state.currentUser;
+    },
   },
   methods: {
     async getRestaurant() {
@@ -62,7 +69,9 @@ export default {
           id: doc.id,
           name: doc.data().name,
           phone: doc.data().phoneNum,
+          url: doc.data().url,
           openTime: doc.data().operatingHours,
+          NoV: doc.data().NoV,
         });
       });
       console.log(this.restaurantList);
@@ -71,40 +80,14 @@ export default {
       window.open(v)
     },
     async toVote(v) {
+      this.$q.loading.show();
       const db = getFirestore(app);
-      //判斷文件是否存在
-      const res = doc(db, "vote", this.today);
-      try{
-        const voteDoc = await getDocs(res);
-      if (voteDoc.exists()) {
-        //如果存在，則更新
-        await setDoc(doc(db, "vote", this.today), {
-          //變動key為物件名稱其中屬性包含count跟陣列型態的name
-          [v]: {
-            count: voteDoc.data()[v].count + 1,
-            id: [...voteDoc.data()[v].is, this.$store.state.currentUserInfo.id],
-          },
-
-        });
-      }
-      else {
-        //如果不存在，則新增
-        await setDoc(doc(db, "vote", this.today), {
-          [v]: {
-            count: 1,
-            id: [this.$store.state.currentUserInfo.id],
-          },
-        });
-      }
-      this.$q.notify({
-        message: "投票成功",
-        color: "positive",
-        icon: "success",
-      });
-      }catch(err){
-        console.log(err)
-      }
-     
+      const res = doc(db, "restaurant", v.id);
+      await setDoc(res, { NoV: v.NoV + 1 }, { merge: true });
+      const res2 = doc(db, "user", this.currentUser.id);
+      await setDoc(res2, { voteRight: false , voteTo: v.name}, { merge: true });
+      console.log("投票成功");
+      window.location.reload();
     },
   },
   mounted() {
@@ -112,5 +95,4 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped></style>
+<style></style>
