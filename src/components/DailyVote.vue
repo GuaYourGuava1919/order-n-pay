@@ -3,7 +3,7 @@
     <q-card
       flat
       bordered
-      class="my-card bg-grey-3 text-secondary q-ma-md"
+      class="my-card bg-grey-2 text-secondary q-ma-md"
       v-for="res in restaurantList"
       :key="res.id"
     >
@@ -13,11 +13,25 @@
             <div class="text-h6 text-weight-bold">{{ res.name }}</div>
             <div class="flex items-center" v-if="res.phone">
               <div class="text-subtitle2">訂餐電話：</div>
-              <q-btn unelevated rounded color="primary" icon="phone" size="sm" :href="'tel:' + res.phone"/>
+              <q-btn
+                unelevated
+                rounded
+                color="primary"
+                icon="phone"
+                size="xs"
+                :href="'tel:' + res.phone"
+              />
             </div>
             <div class="flex items-center" v-else>
               <div class="text-subtitle2">訂餐網址：</div>
-              <q-btn unelevated rounded color="primary" icon="open_in_new" size="sm" @click="goWeb(res.url)"/>
+              <q-btn
+                unelevated
+                rounded
+                color="primary"
+                icon="open_in_new"
+                size="xs"
+                @click="goWeb(res.url)"
+              />
             </div>
             <div class="text-subtitle2">營業時間：{{ res.openTime }}</div>
           </div>
@@ -25,19 +39,39 @@
       </q-card-section>
       <q-separator />
       <q-card-actions class="flex justify-between q-ma-md">
-        <div class="text-primary text-h6">得票數：{{res.NoV}}</div>
-        <q-btn push color="primary" class="q-px-md" @click="toVote(res)" v-if="restTime == true  && currentUserInfo.voteRight == true"
+        <div class="text-primary text-h6">得票數：{{ res.NoV }}</div>
+        <q-btn
+          push
+          color="primary"
+          class="q-px-md"
+          @click="toVote(res)"
+          v-if="restTime == true && currentUserInfo.voteRight == true"
           >投票</q-btn
         >
-        <q-btn color="primary" outline class="q-px-md" disable v-else-if="!currentUserInfo.voteRight">已投票</q-btn>
-        <q-btn color="primary" outline class="q-px-md" disable v-else>投票已截止</q-btn>
+        <q-btn
+          color="primary"
+          outline
+          class="q-px-md"
+          disable
+          v-else-if="!currentUserInfo.voteRight"
+          >已投票</q-btn
+        >
+        <q-btn color="primary" outline class="q-px-md" disable v-else
+          >投票已截止</q-btn
+        >
       </q-card-actions>
     </q-card>
   </div>
 </template>
 
 <script>
-import { getFirestore, collection, getDocs, setDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+} from "firebase/firestore";
 import app from "../components/setting/FirebaseConfig.vue";
 import moment from "moment";
 export default {
@@ -49,8 +83,8 @@ export default {
     };
   },
   computed: {
-    restTime(){
-      return this.$store.state.restTime
+    restTime() {
+      return this.$store.state.restTime;
     },
     currentUserInfo() {
       return this.$store.state.currentUserInfo;
@@ -74,10 +108,10 @@ export default {
           NoV: doc.data().NoV,
         });
       });
-      console.log(this.restaurantList);
+      //console.log(this.restaurantList);
     },
     goWeb(v) {
-      window.open(v)
+      window.open(v);
     },
     async toVote(v) {
       this.$q.loading.show();
@@ -85,7 +119,7 @@ export default {
       const res = doc(db, "restaurant", v.id);
       await setDoc(res, { NoV: v.NoV + 1 }, { merge: true });
       const res2 = doc(db, "user", this.currentUser.id);
-      await setDoc(res2, { voteRight: false , voteTo: v.name}, { merge: true });
+      await setDoc(res2, { voteRight: false, voteTo: v.name }, { merge: true });
       console.log("投票成功");
       window.location.reload();
     },
