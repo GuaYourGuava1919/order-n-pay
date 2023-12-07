@@ -1,8 +1,12 @@
 <template>
-  <div class="q-pa-md q-ma-md" v-if="currentUserInfo.auth == 'admin'">
+  <div class="q-pa-md q-ma-sm" v-if="currentUserInfo.auth == 'admin'">
+    <div class="flex item-center text-primary q-py-md">
+      <q-icon name="manage_accounts" size="30px"></q-icon>
+      <div class="text-h6 text-weight-bold">管理員控制板</div>
+    </div>
     <div class="">
-      <q-form @submit="createRes" @reset="onReset" class="q-gutter-md">
-        <div class="text-h6 q-ma-md">餐廳資訊管理</div>
+      <q-form @submit="createRes" @reset="onReset" class="q-gutter-sm">
+        <div class="text-h7 q-py-md text-weight-bold">餐廳資訊管理</div>
         <q-input
           filled
           v-model="restaurant.name"
@@ -42,7 +46,7 @@
           hide-bottom-space
           :rules="[(val) => (val && val.length > 0) || '必填']"
         />
-        <div align="right">
+        <div align="right" class="q-py-md">
           <q-btn
             label="清空"
             type="reset"
@@ -50,19 +54,73 @@
             flat
             class="q-ml-sm"
           />
-          <q-btn label="送出" type="submit" color="primary" />
+          <q-btn label="送出" type="submit" color="primary" rounded push />
         </div>
       </q-form>
     </div>
-    <div class="">
-      <div class="text-h6 q-ma-md">重置餐廳得票數</div>
+    <div class="q-py-md">
+      <div class="text-h7 q-ma-sm text-weight-bold">重置餐廳得票數</div>
       <q-btn
         label="重置"
-        color="primary"
+        color="secondary"
         push
-        class="q-ma-md"
-        @click="resetVote"
+        style="width: 100%"
+        @click="confirm = true"
       />
+      <q-dialog v-model="confirm">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">確定重置【餐廳得票數】？</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">重置後將無法回復，請確認是否要重置</div>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn
+              push
+              rounded
+              label="確定"
+              color="primary"
+              v-close-popup
+              @click="resetVote"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
+    <div class="q-py-md">
+      <div class="text-h7 q-ma-sm text-weight-bold">重置使用者投票權</div>
+      <q-btn
+        label="重置"
+        color="secondary"
+        push
+        style="width: 100%"
+        @click="confirm2 = true"
+      />
+      <q-dialog v-model="confirm2">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">確定重置【使用者投票權】？</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">重置後將無法回復，請確認是否要重置</div>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn
+              push
+              rounded
+              label="確定"
+              color="primary"
+              v-close-popup
+              @click="resetUserRight"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
   <div class="flex justify-center" v-else>
@@ -101,6 +159,8 @@ export default {
         url: "",
       },
       options: ["電話號碼", "訂餐網址"],
+      confirm: false,
+      confirm2: false,
     };
   },
   computed: {
@@ -153,8 +213,29 @@ export default {
           });
         });
         this.$q.notify({
-          color: "secondary",
-          message: "重置成功",
+          color: "info",
+          message: "重置票數成功",
+          icon: "restart_alt",
+        });
+      } catch (e) {
+        console.log("重置失敗", e);
+      }
+    },
+    async resetUserRight() {
+      try {
+        const db = getFirestore(app);
+        const res = collection(db, "user");
+        const querySnapshot = await getDocs(res);
+        querySnapshot.forEach((docSnapshot) => {
+          const docRef = doc(db, "user", docSnapshot.id);
+          updateDoc(docRef, {
+            voteRight: true,
+            voteTo: "",
+          });
+        });
+        this.$q.notify({
+          color: "info",
+          message: "重置投票權成功",
           icon: "restart_alt",
         });
       } catch (e) {
@@ -171,4 +252,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.text-h7 {
+  font-size: 1rem;
+}
+</style>
