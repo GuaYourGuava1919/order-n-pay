@@ -44,7 +44,7 @@
           push
           color="primary"
           class="q-px-md"
-          @click="toVote(res)"
+          @click="doubleCheck(res)"
           v-if="restTime == true && currentUserInfo.voteRight == true"
           >投票</q-btn
         >
@@ -59,6 +59,26 @@
         <q-btn color="primary" outline class="q-px-md" disable v-else
           >投票已截止</q-btn
         >
+        <q-dialog v-model="confirm">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">確定要投票【{{ picked.name }}】？</div>
+            </q-card-section>
+            <q-card-section class="q-pt-none">
+              投票無法撤回，請確認是否要投票給
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn
+                push
+                round
+                label="投"
+                color="primary"
+                v-close-popup
+                @click="toVote()"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-card-actions>
     </q-card>
   </div>
@@ -80,6 +100,8 @@ export default {
     return {
       restaurantList: [],
       today: moment().format("YYYYMMDD"),
+      confirm: false,
+      picked: {},
     };
   },
   computed: {
@@ -113,15 +135,24 @@ export default {
     goWeb(v) {
       window.open(v);
     },
-    async toVote(v) {
+    async toVote() {
       this.$q.loading.show();
       const db = getFirestore(app);
-      const res = doc(db, "restaurant", v.id);
-      await setDoc(res, { NoV: v.NoV + 1 }, { merge: true });
+      const res = doc(db, "restaurant", this.picked.id);
+      await setDoc(res, { NoV: this.picked.NoV + 1 }, { merge: true });
       const res2 = doc(db, "user", this.currentUser.id);
-      await setDoc(res2, { voteRight: false, voteTo: v.name }, { merge: true });
+      await setDoc(
+        res2,
+        { voteRight: false, voteTo: this.picked.name },
+        { merge: true }
+      );
       console.log("投票成功");
       window.location.reload();
+    },
+    doubleCheck(v) {
+      this.confirm = true;
+      this.picked = v;
+      console.log(this.picked);
     },
   },
   mounted() {
