@@ -83,8 +83,8 @@ export default {
     },
     async timeCountdown() {
       const now = moment();
-      if (now.hour() < 12) {
-        //12點前
+      if (now.hour() == 11 && now.minute() < 30) {
+        //11點半前
         const targetTime = moment().set({ hour: 12, minute: 0, second: 0 }); //設定截止時間
         const duration = moment.duration(targetTime.diff(now)); //計算時間差
         this.restTime.hours = duration.hours(); //取得小時

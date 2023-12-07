@@ -1,7 +1,10 @@
-<template v-if="this.maxNoVObject.NoV != 0 && this.openOrder == true">
-  <div class="q-ma-md q-pa-md">
+<template>
+  <div
+    class="q-ma-md q-pa-md"
+    v-if="this.maxNoVObject.NoV != 0 && this.openOrder == true"
+  >
     <div class="text-h6 text-primary text-weight-bold q-py-md">
-      我要點【{{
+      我想來點【{{
         this.maxNoVObject.name ? this.maxNoVObject.name : "讀取中..."
       }}】的...
     </div>
@@ -47,9 +50,7 @@
       </div>
     </q-form>
   </div>
-</template>
-<template v-else>
-  <div class="q-ma-md q-pa-md flex justify-center">
+  <div class="q-ma-md q-pa-md flex justify-center" v-else>
     <div class="text-h6 text-secondary text-weight-bold q-py-md">
       投票尚未結標/開標，請稍後再來！
     </div>
@@ -158,14 +159,18 @@ export default {
         console.error("新增餐點時發生錯誤：", error);
       }
     },
+    //判斷是否在點餐時間內
     catchTime() {
       const now = moment();
-      if (now.hour() > 10 && now.minute() > 30) {
+      if ((now.hour() == 11 && now.minute() < 30) || now.hour() == 18) {
         this.openOrder = true;
+        console.log(this.openOrder);
       } else {
         this.openOrder = false;
+        console.log(this.openOrder);
       }
     },
+    //關閉彈窗
     onClose() {
       console.log("close");
     },

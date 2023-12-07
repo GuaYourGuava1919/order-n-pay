@@ -1,5 +1,11 @@
 <template>
-  <q-item clickable tag="a" target="_blank" @click="gotoPage(link)" class="text-primary">
+  <q-item
+    clickable
+    tag="a"
+    target="_blank"
+    @click="gotoPage(link)"
+    class="text-primary"
+  >
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -35,6 +41,10 @@ export default {
   },
   methods: {
     gotoPage(v) {
+      //如果在同一頁面，就不跳轉
+      if (this.$route.path == v) {
+        return;
+      }
       this.$router.push(v);
     },
   },
