@@ -9,21 +9,18 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/OrderMeal.vue") },
+      { path: "list", component: () => import("pages/OrderList.vue") },
     ],
   },
   {
     path: "/paythebill",
     component: () => import("layouts/MainLayout.vue"),
-    children: [
-      { path: "", component: () => import("pages/PaytheBill.vue") },
-    ],
+    children: [{ path: "", component: () => import("pages/PaytheBill.vue") }],
   },
   {
     path: "/manager",
     component: () => import("layouts/MainLayout.vue"),
-    children: [
-      { path: "", component: () => import("pages/ManagerZone.vue") },
-    ],
+    children: [{ path: "", component: () => import("pages/ManagerZone.vue") }],
   },
 
   {

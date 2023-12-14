@@ -1,8 +1,9 @@
 <template>
-  <div
+  <!-- <div
     class="q-ma-md q-pa-md"
     v-if="this.maxNoVObject.NoV != 0 && this.openOrder == true"
-  >
+  > -->
+  <div class="q-ma-md q-pa-md" v-if="this.maxNoVObject.NoV != 0">
     <div class="text-h6 text-primary text-weight-bold q-py-md">
       我想來點【{{
         this.maxNoVObject.name ? this.maxNoVObject.name : "讀取中..."
@@ -64,6 +65,7 @@ import {
   getDocs,
   getFirestore,
   setDoc,
+  addDoc,
 } from "firebase/firestore";
 import app from "../components/setting/FirebaseConfig.vue";
 import moment from "moment";
@@ -75,6 +77,7 @@ export default {
       maxNoVObject: {},
       meal: {},
       nowId: "",
+      type: "",
       openOrder: false,
     };
   },
@@ -132,20 +135,21 @@ export default {
       try {
         const db = getFirestore(app);
         const now = moment();
-        if (now.hours() < 11) {
-          this.nowId = now.format("YYYYMMDD") + "AM";
-        } else {
-          this.nowId = now.format("YYYYMMDD") + "PM";
-        }
+        this.nowId = now.format("YYYYMMDD");
         console.log(this.nowId);
-        await setDoc(doc(db, "order", this.nowId), {
-          [this.uid]: {
-            orderItem: this.meal.orderItem,
-            secItem: this.meal.secItem,
-            itemPrice: this.meal.itemPrice,
-            orderTime: moment().format("YYYY-MM-DD HH:mm:ss"),
-            orderPerson: this.currentUserInfo.name,
-          },
+        if (now.hours() < 12) {
+          this.type = "lunch";
+        } else {
+          this.type = "dinner";
+        }
+        const orderDocRef = doc(collection(db, "order", this.nowId, this.type));
+        await setDoc(orderDocRef, {
+          orderItem: this.meal.orderItem,
+          secItem: this.meal.secItem,
+          itemPrice: this.meal.itemPrice,
+          orderTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+          orderPerson: this.currentUserInfo.name,
+          orderPersonId: this.uid,
         });
         console.log("已新增餐點");
         this.$q.notify({

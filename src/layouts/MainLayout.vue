@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated >
+    <q-header elevated>
       <q-toolbar>
         <q-btn
           flat
@@ -13,13 +13,7 @@
         />
         <q-btn flat dense round icon="menu" v-else @click="alert = true" />
         <q-toolbar-title @click="goto()"> Order-n-Pay </q-toolbar-title>
-        <q-btn
-          outline
-          rounded
-          label="登出"
-          @click="tosignOut"
-          v-if="uid"
-        />
+        <q-btn outline rounded label="登出" @click="tosignOut" v-if="uid" />
         <q-btn
           push
           rounded
@@ -79,9 +73,15 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 const linksData = [
   {
     title: "點餐功能",
-    caption: "開單、點餐、常用餐廳資訊",
+    caption: "點餐",
     icon: "local_dining",
     link: "/order",
+  },
+  {
+    title: "訂單認領功能",
+    caption: "統計訂單、認領訂單",
+    icon: "assignment",
+    link: "/order/list",
   },
   {
     title: "收付帳功能",
@@ -91,7 +91,7 @@ const linksData = [
   },
   {
     title: "管理員區",
-    caption: "編輯餐廳資訊",
+    caption: "編輯餐廳資訊、重置票權、重置票數",
     icon: "admin_panel_settings",
     link: "/manager",
   },

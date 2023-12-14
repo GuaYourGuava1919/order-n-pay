@@ -53,8 +53,6 @@
 <script>
 import DailyVote from "../components/DailyVote.vue";
 import moment from "moment";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
-import app from "../components/setting/FirebaseConfig.vue";
 export default {
   name: "PageIndex",
   data() {
@@ -83,7 +81,7 @@ export default {
     },
     async timeCountdown() {
       const now = moment();
-      if (now.hour() == 11 && now.minute() < 30) {
+      if (now.hour() < 12) {
         //11點半前
         const targetTime = moment().set({ hour: 12, minute: 0, second: 0 }); //設定截止時間
         const duration = moment.duration(targetTime.diff(now)); //計算時間差

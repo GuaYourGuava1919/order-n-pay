@@ -1,31 +1,28 @@
-# Quasar App (order-n-pay)
+# order-N-pay 系統說明書
 
-A Quasar Project
-
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
-
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
-
-
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.conf.js](https://v1.quasar.dev/quasar-cli/quasar-conf-js).
+1. 首頁
+   使用者：可直接投票
+2. 點餐功能 (需登入)
+  - 開啟點餐單
+    - 餐廳
+    - 截止日期
+    - 必填欄位
+  - 點餐
+    - 必填欄位
+    - 備註
+  - 確認餐點
+    - 開單人確認品項，並按下確認
+    - 若品項無，則按下退回請點餐人重點
+  - 設定取餐人、付費人
+3. 攤帳功能
+  -
+4. 投票
+5. 抽籤
+6. 權限
+  - 登入
+    - 確保頁面重整後資料仍在
+    - 登入後時間過長自動登出
+  - 註冊
+    - 輸入資料：【名稱、電郵、密碼、付款方式、銀行帳號】
+  - 登出
+    - 登出後移除所有 local 資訊
