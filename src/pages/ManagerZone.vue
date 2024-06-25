@@ -147,7 +147,7 @@ import {
   getDocs,
   doc,
 } from "firebase/firestore";
-import app from "../components/setting/FirebaseConfig.vue";
+import app from "../components/setting/FirebaseConfig.js";
 export default {
   name: "ManagerZone",
   data() {

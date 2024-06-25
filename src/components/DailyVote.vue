@@ -92,7 +92,7 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-import app from "../components/setting/FirebaseConfig.vue";
+import app from "./setting/FirebaseConfig.js";
 import moment from "moment";
 export default {
   name: "DailyVote",

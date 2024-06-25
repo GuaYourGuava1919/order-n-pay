@@ -73,7 +73,7 @@
 <script>
 import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import app from "../setting/FirebaseConfig.vue";
+import app from "../setting/FirebaseConfig.js";
 export default {
   name: "SignIn",
   data() {
@@ -110,6 +110,7 @@ export default {
     //登入
     async signIn() {
       const auth = getAuth(app);
+      // this.auth = getAuth(app);
       try {
         this.$q.loading.show();
         const res = await signInWithEmailAndPassword(
@@ -127,6 +128,7 @@ export default {
         }
       } catch (error) {
         this.loginError = "登入失敗，請檢查帳號密碼是否正確" 
+        console.log("登入失敗", error);
         this.$q.loading.hide();
       }
     },

@@ -67,7 +67,7 @@ import EssentialLink from "components/EssentialLink.vue";
 import SignUp from "src/components/auth/SignUp.vue";
 import SignIn from "src/components/auth/SignIn.vue";
 import { getAuth, signOut } from "firebase/auth";
-import app from "../components/setting/FirebaseConfig.vue";
+import app from "../components/setting/FirebaseConfig.js";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 const linksData = [

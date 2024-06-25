@@ -67,7 +67,7 @@ import {
   setDoc,
   addDoc,
 } from "firebase/firestore";
-import app from "../components/setting/FirebaseConfig.vue";
+import app from "../components/setting/FirebaseConfig.js";
 import moment from "moment";
 export default {
   name: "OrderMeal",

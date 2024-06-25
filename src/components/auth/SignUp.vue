@@ -79,7 +79,7 @@
 
 <script>
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword, getAuth } from "firebase/auth";
-import app from "../setting/FirebaseConfig.vue";
+import app from "../setting/FirebaseConfig.js";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 export default {
   name: "SignUp",
