@@ -136,7 +136,6 @@ export default {
         const db = getFirestore(app);
         const now = moment();
         this.nowId = now.format("YYYYMMDD");
-        console.log(this.nowId);
         if (now.hours() < 12) {
           this.type = "lunch";
         } else {

@@ -18,7 +18,7 @@
           >
             今日已投票給 {{ currentUserInfo.voteTo }}
           </div>
-          <div class="text-subtitle2 text-weight-bold" v-else>
+          <div class="text-subtitle2 text-weight-bold">
             距離投票截止時間：{{ restTime.hours }}小時{{ restTime.minutes }}分鐘
           </div>
         </div>
